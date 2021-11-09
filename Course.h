@@ -1,9 +1,9 @@
 //
-// Created by 15255 on 5/30/2021.
+// Created by Eyu on 11/7/2021.
 //
 
-#ifndef COURSE_H
-#define COURSE_H
+#ifndef PROJECT4_COURSE_H
+#define PROJECT4_COURSE_H
 
 #include <fstream>
 #include <iostream>
@@ -47,7 +47,7 @@ public:
            std::string college,
            std::string instructor,
            std::string email
-           ) {
+    ) {
         this->rowId = rowId;
         this->CRN = CRN;
         this->maxEnrollment = maxEnrollment;
@@ -152,45 +152,45 @@ public:
     }
 
     /**
-     * Overload < operator for obje ct comparison
+     * Overload < operator for object comparison
      */
     friend bool operator < (const Course& lhs, const Course& rhs) {
-        return lhs.getCRN() < rhs.getCRN();
+        return lhs.getMaxEnrollment() < rhs.getMaxEnrollment();
     }
 
     /**
      * Overload > operator for object comparison
      */
     friend bool operator > (const Course& lhs, const Course& rhs) {
-        return lhs.getCRN() > rhs.getCRN();
+        return lhs.getMaxEnrollment() > rhs.getMaxEnrollment();
     }
 
     /**
      * Overload <= operator for object comparison
      */
     friend bool operator <= (const Course& lhs, const Course& rhs) {
-        return lhs.getCRN() <= rhs.getCRN();
+        return lhs.getMaxEnrollment() <= rhs.getMaxEnrollment();
     }
 
     /**
      * Overload >= operator for object comparison
      */
     friend bool operator >= (const Course& lhs, const Course& rhs) {
-        return lhs.getCRN() >= rhs.getCRN();
+        return lhs.getMaxEnrollment() >= rhs.getMaxEnrollment();
     }
 
     /**
      * Overload == operator for object comparison
      */
     friend bool operator == (const Course& lhs, const Course& rhs) {
-        return lhs.getCRN() == rhs.getCRN();
+        return lhs.getMaxEnrollment() == rhs.getMaxEnrollment();
     }
 
     /**
      * Overload != operator for object comparison
      */
     friend bool operator != (const Course& lhs, const Course& rhs) {
-        return lhs.getCRN() != rhs.getCRN();
+        return lhs.getMaxEnrollment() != rhs.getMaxEnrollment();
     }
 
 };
@@ -211,7 +211,6 @@ bool loadFromFile(std::string file, std::vector<Course>& objs) {
     }
 
     // Opened file OK
-
     // Get rid of the header line: read it and throw it away
     std::string header = "";
     getline(fileInput, header);
@@ -388,7 +387,7 @@ void CourseTest() {
 
     // Test initialization (and getters)
     Course testObject2 = Course(3, 96196, 20, 0, "ABIO", "Doctoral Dissertation Research",
-                                 "CALS", "Harvey, Jean Ruth", "Jean.Harvey@uvm.edu");
+                                "CALS", "Harvey, Jean Ruth", "Jean.Harvey@uvm.edu");
     assert (testObject2.getRowId() == 3);
     assert (testObject2.getCRN() == 96196);
     assert (testObject2.getMaxEnrollment() == 20);
@@ -400,4 +399,4 @@ void CourseTest() {
     assert (testObject2.getEmail() == "Jean.Harvey@uvm.edu");
 }
 
-#endif //COURSE_H
+#endif //PROJECT4_COURSE_H
