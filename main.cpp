@@ -260,82 +260,63 @@ inline int leftChild(int i) {
  * correct place for the value
  */
 template<typename Comparable>
-tuple<unsigned long long int, unsigned long long int> percolateDown(vector<Comparable>& v, int start, int end, unsigned long long int numReads, unsigned long long int numWrites) {
+tuple<unsigned long long int, unsigned long long int> percolateDown(vector<Comparable> &vec, int i, int n, int child, Comparable temp) {
     // we start with root = start, but as we progress,
     // "root" will actually be the root of a subtree
-    int root = start;
-    while (leftChild(root) <= end) {
-        int child = leftChild(root);
-        if (child + 1 <= end && v[child] < v[child + 1]){
-            // if there's a right child, and the value of the
-            // left child is less than that of the right child...
-            // we increment child, so we're working with
-            // the right child.
-            ++child;
+    unsigned long long int numReads = 0, numWrites = 0;
+    for (temp = vec[i]; leftChild(i) < n; i = child) {
+        numReads += 1;
+        child = leftChild(i);
+        // choose the child with the larger value
+        if (child != n - 1 && vec[child] < vec[child + 1]) {
             numReads += 2;
+            ++child;
         }
-        if (v[root] < v[child]) {
-            // swap
-            Comparable temp = v[root];
-            v[root] = v[child];
-            v[child] = temp;
-            root = child;
-            numWrites += 3;
-            numReads += 5;
+        // if the parent is less than the child, swap them
+        if (temp < vec[child]) {
+            vec[i] = vec[child];
+            numReads += 3;
+            numWrites += 1;
         } else {
-            return make_tuple(numReads, numWrites);
+            // parent is >= both children. nothing more to do.
+            break;
         }
     }
-}
-
-/**
- * heapify; used by heapSort()
- * If k is the number of levels in our heap, we start
- * at the k - 1 level (one up from the bottom) and we
- * percolate elements down, starting from the appropriate
- * node in that level -- that is, the rightmost element
- * with children. start = (size - 2) / 2 will yield
- * the index of that element. After each percolation is
- * complete, we decrement start, moving left, and then up
- * through the heap. In the last step, start = 0 and we
- * percolate down from the root to complete the process.
- */
-template<typename Comparable>
-tuple<unsigned long long int, unsigned long long int> heapify(vector<Comparable>& v, int size, unsigned long long int numReads, unsigned long long int numWrites) {
-    int start = (size - 2) / 2;
-    while (start >= 0) {
-        auto heapRecord = percolateDown(v, start, size - 1, numReads, numWrites);
-        numReads += get<0>(heapRecord);
-        numWrites += get<1>(heapRecord);
-        --start;
-    }
+    vec[i] = temp;
+    numReads += 1;
+    numWrites += 1;
     return make_tuple(numReads, numWrites);
-
 }
+
 
 /**
  * Heap sort
  */
 template<typename Comparable>
-tuple<unsigned long long int, unsigned long long int> heapSort(vector<Comparable>& v) {
-    int size = v.size();
-    int end = size - 1;
+tuple<unsigned long long int, unsigned long long int> heapSort(vector<Comparable>& vec) {
     unsigned long long int numReads = 0, numWrites = 0;
-    auto heapRecord = heapify(v, size, numReads, numWrites);
-    //int numReads = get<0>(heapRecord);
-    //int numWrites = get<1>(heapRecord);
-    while (end > 0) {
-        // v[end] is sorted portion; v[0] is current max
-        Comparable temp = v[end];
-        v[end] = v[0];
-        v[0] = temp;
+    int i, j, child;
+    Comparable temp1, temp2;
+    // build the heap (with max value at root)
+    for (i = vec.size() / 2 - 1; i >= 0; --i) {
+        auto heapRecord_0=percolateDown(vec, i, vec.size(), child, temp2);
+        numReads += get<0>(heapRecord_0);
+        numWrites += get<1>(heapRecord_0);
+    }
+    // keep deleting the max
+    for (j = vec.size() - 1; j > 0; --j) {
+        // swap the maximum out
+        temp1 = vec[0];
+        vec[0] = vec[j];
+        vec[j] = temp1;
+        // Swap need 3 RW
         numReads += 3;
         numWrites += 3;
-        --end;
-        auto heapRecord2 = percolateDown(v, 0, end, numReads, numWrites);
-        numReads += get<0>(heapRecord2);
-        numWrites += get<1>(heapRecord2);
-        //printVector(v);
+
+        // make it into a heap again
+        auto heapRecord_1 = percolateDown(vec, 0, j, child, temp2);
+        numReads += get<0>(heapRecord_1);
+        numWrites += get<1>(heapRecord_1);
     }
     return make_tuple(numReads, numWrites);
 }
