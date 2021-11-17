@@ -265,6 +265,7 @@ tuple<unsigned long long int, unsigned long long int> percolateDown(vector<Compa
     // "root" will actually be the root of a subtree
     unsigned long long int numReads = 0, numWrites = 0;
     for (temp = vec[i]; leftChild(i) < n; i = child) {
+        numWrites += 1;
         numReads += 1;
         child = leftChild(i);
         // choose the child with the larger value
